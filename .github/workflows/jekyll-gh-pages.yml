@@ -1,3 +1,4 @@
+# .github/workflows/deploy.yml
 name: Deploy Laravel to Production
 
 on:
@@ -7,10 +8,13 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
+      # 1️⃣ Checkout your repository
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 2️⃣ Setup PHP
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -18,12 +22,11 @@ jobs:
           extensions: mbstring, xml, ctype, iconv, json, pdo_mysql
           tools: composer:v2
 
-      - name: Install dependencies
-        run: |
-          composer install --no-dev --optimize-autoloader
-          npm install
-          npm run build --production
+      # 3️⃣ Install PHP dependencies only (no npm)
+      - name: Install Composer dependencies
+        run: composer install --no-dev --optimize-autoloader
 
+      # 4️⃣ Deploy via SSH
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1
         with:
@@ -34,7 +37,6 @@ jobs:
             cd /var/www/your-app
             git pull origin main
             composer install --no-dev --optimize-autoloader
-            npm install && npm run build --production
             php artisan migrate --force
             php artisan config:cache
             php artisan route:cache
