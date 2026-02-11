@@ -1,15 +1,15 @@
-name: Deploy Laravel to Production
+name: Deploy Laravel Backend
 
 on:
   push:
     branches: ["main"]
 
 jobs:
-  deploy:
+  laravel-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout the repository
+      # 1️⃣ Checkout repository
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -25,20 +25,11 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --no-dev --optimize-autoloader
 
-      # 4️⃣ Deploy via SSH
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            cd /var/www/your-app
-            git pull origin main
-            composer install --no-dev --optimize-autoloader
-            php artisan migrate --force
-            php artisan config:cache
-            php artisan route:cache
-            php artisan view:cache
-            php artisan queue:restart
-            php artisan up
+      # 4️⃣ Run migrations and cache configs
+      - name: Run Laravel migrations & caches
+        run: |
+          php artisan migrate --force
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
+          php artisan queue:restart
