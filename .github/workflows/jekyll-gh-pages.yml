@@ -1,4 +1,3 @@
-# .github/workflows/deploy.yml
 name: Deploy Laravel to Production
 
 on:
@@ -10,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout your repository
+      # 1️⃣ Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -22,7 +21,7 @@ jobs:
           extensions: mbstring, xml, ctype, iconv, json, pdo_mysql
           tools: composer:v2
 
-      # 3️⃣ Install PHP dependencies only (no npm)
+      # 3️⃣ Install PHP dependencies
       - name: Install Composer dependencies
         run: composer install --no-dev --optimize-autoloader
 
